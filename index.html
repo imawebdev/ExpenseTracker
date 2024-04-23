@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker</title>
+<!-- Link to Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* Any additional custom styles can go here */
+    .expense-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    .expense-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+    .delete-btn {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Expense Tracker</h2>
+
+    
+
+    <div class="form-group">
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" oninput="toggleClearButton()" placeholder="Type something..." class="form-control"><br>
+        <input type="reset" id="clearButton" class="clear-button" onclick="clearInput()"  alt="Clear the text">
+        <!--<span id="clearButton" class="clear-button" onclick="clearInput()">x</span>-->
+    </div>
+    <div class="form-group">
+        <label for="itemCost">Item Cost (£):</label>
+        <input type="number" id="itemCost" oninput="toggleClearButton()" placeholder="Type something..." class="form-control"><br>
+        <input type="reset" id="clearButton" class="clear-button" onclick="clearInput2()"  alt="Clear the text">
+        <!--<span id="clearButton" class="clear-button" onclick="clearInput2()">x</span>-->
+    </div>
+    <button onclick="addItem()" class="btn btn-primary mr-2">Add Item</button>
+    <button onclick="clearItems()" class="btn btn-danger">Clear Items</button>
+
+    <ul id="expenseList" class="expense-list"></ul>
+
+    <p>Total Cost: <span id="totalCost">£0.00</span></p>
+</div>
+
+<script>
+
+    /*function toggleClearButton() {
+        var inputBox = document.getElementById("itemName");
+        var clearButton = document.getElementById("clearButton");
+
+        if (inputBox.value.trim() !== "") {
+            clearButton.style.display = "block";
+        } else {
+            clearButton.style.display = "none";
+        }
+    }*/
+
+    function clearInput() {
+        var inputBox = document.getElementById("itemName");
+        inputBox.value = "";
+        toggleClearButton();
+    }
+
+
+
+    function clearInput2() {
+        var inputBox = document.getElementById("itemCost");
+        inputBox.value = "";
+        toggleClearButton();
+    }
+
+    var expenses = [];
+
+    function addItem() {
+        var itemName = document.getElementById("itemName").value.trim();
+        var itemCost = parseFloat(document.getElementById("itemCost").value);
+        if (isNaN(itemCost)) {
+            alert("Please enter a valid number for Item Cost.");
+            return;
+        }
+        
+        expenses.push({ name: itemName, cost: itemCost });
+        renderExpenses();
+        updateTotal();
+    }
+    
+    function clearItems() {
+        expenses = [];
+        renderExpenses();
+        updateTotal();
+    }
+
+    function deleteItem(index) {
+        expenses.splice(index, 1);
+        renderExpenses();
+        updateTotal();
+    }
+
+    function renderExpenses() {
+        var expenseList = document.getElementById("expenseList");
+        expenseList.innerHTML = "";
+        expenses.forEach(function(expense, index) {
+            var li = document.createElement("li");
+            li.className = "expense-item";
+            li.innerHTML = `
+                <span>${expense.name} - £${expense.cost.toFixed(2)}</span>
+                <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+            `;
+            expenseList.appendChild(li);
+        });
+    }
+
+    function updateTotal() {
+        var totalCost = expenses.reduce(function(acc, expense) {
+            return acc + expense.cost;
+        }, 0);
+        document.getElementById("totalCost").textContent = "£" + totalCost.toFixed(2);
+    }
+
+
+</script>
+
+</body>
+</html>
